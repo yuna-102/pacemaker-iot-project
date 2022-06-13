@@ -7,3 +7,4 @@ keras==2.6
 pandas
 git+https://github.com/repodiac/german_transliterate.git#egg=german_transliterate
 playsound
+pymodi

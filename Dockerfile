@@ -5,6 +5,6 @@ RUN apt-get install -y zsh tmux wget git libsndfile1
 RUN pip install ipython && \
     pip install TensorFlowTTS  && \
     pip install git+https://github.com/repodiac/german_transliterate.git#egg=german_transliterate && \
-    pip install streamlit==1.10.0 streamlit_option_menu==0.3.2 Soundfile==0.10.3.post1 tensorflow==2.6.0 keras==2.6 pandas
+    pip install streamlit==1.10.0 streamlit_option_menu==0.3.2 Soundfile==0.10.3.post1 tensorflow==2.6.0 keras==2.6 pandas pymodi
 RUN mkdir /workspace
 WORKDIR /workspace

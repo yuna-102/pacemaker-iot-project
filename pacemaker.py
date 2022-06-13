@@ -228,8 +228,13 @@ class PaceMakerCar:
             # runtime을 분->시간 단위로 환산
             running_distance = motor_speed * (run_time / 60)
 
-            self.user_data["user_calories"].append(calories)
-            self.user_data["running_distance"].append(running_distance)
+            self.user_data.append({
+                "id": self.user_id, 
+                "date": end_time,
+                "consumed_calories": cal,
+                "running_distance": running_distance,
+            }, ignore_index=True)
+            
 
     # 주행 종료
     def stop(self):

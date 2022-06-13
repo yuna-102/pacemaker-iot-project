@@ -33,7 +33,7 @@ def lab_page() -> None:
                 st.session_state.processor,
                 st.session_state.model,
                 st.session_state.mb_melgan,
-            ) = loop.run_until_complete(load_voice_model(selected_langauge))
+            ) = loop.run_until_complete(async_load_voice_model(selected_langauge))
 
     # 모델이 성공적으로 불러와졌을 경우 입력된 텍스트로 음성 합성
     if (

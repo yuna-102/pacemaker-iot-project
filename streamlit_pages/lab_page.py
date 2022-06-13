@@ -5,7 +5,7 @@ import soundfile as sf
 import streamlit as st
 
 from utils.streamlit_display_functions import display_new_line
-from voice_synthesis import load_voice_model, text_to_speech
+from voice_synthesis import async_load_voice_model, text_to_speech
 
 
 # 음성 합성을 체험해볼 수 있는 페이지

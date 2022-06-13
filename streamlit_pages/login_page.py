@@ -107,7 +107,7 @@ def login_page(user_db: Type[UserDB]):
                     with st.spinner("페이스메이커에 연결하는 중입니다."):
                         loop = asyncio.new_event_loop()
                         st.session_state.bundle = loop.run_until_complete(
-                            PaceMakerCar.load_modi()
+                            PaceMakerCar.connect_modi()
                         )
                     if st.session_state.bundle:
                         st.success("페이스메이커에 성공적으로 연결되었습니다.")

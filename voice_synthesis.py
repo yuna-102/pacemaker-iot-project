@@ -1,12 +1,11 @@
 from typing import Callable
 
+import soundfile as sf
 import tensorflow as tf
-from playsound import playsound
 from tensorflow_tts.inference import AutoProcessor, TFAutoModel
 
 
-# 음성 합성 모델 불러오기
-async def load_voice_model(language: str = "ko") -> None or Callable:
+def get_language_model_path(language: str = "ko"):
     if language == "ko":
         model_name = "tensorspeech/tts-tacotron2-kss-ko"
         processor_name = "tensorspeech/tts-tacotron2-kss-ko"
@@ -22,6 +21,11 @@ async def load_voice_model(language: str = "ko") -> None or Callable:
         processor_name = "tensorspeech/tts-fastspeech2-baker-ch"
         mb_melgan_name = "tensorspeech/tts-mb_melgan-baker-ch"
 
+    return processor_name, model_name, mb_melgan_name
+
+# 음성 합성 모델 불러오기
+async def async_load_voice_model(language: str = "ko") -> None or Callable:
+    processor_name, model_name, mb_melgan_name = get_language_model_path(language)
     try:
         processor = AutoProcessor.from_pretrained(model_name)
         model = TFAutoModel.from_pretrained(processor_name)
@@ -30,6 +34,16 @@ async def load_voice_model(language: str = "ko") -> None or Callable:
     except:
         return None
 
+def load_voice_model(language: str = "ko") -> None or Callable:
+    processor_name, model_name, mb_melgan_name = get_language_model_path(language)
+
+    try:
+        processor = AutoProcessor.from_pretrained(model_name)
+        model = TFAutoModel.from_pretrained(processor_name)
+        mb_melgan = TFAutoModel.from_pretrained(mb_melgan_name)
+        return processor, model, mb_melgan
+    except:
+        return None
 
 # 텍스트를 음성으로 변환
 def text_to_speech(
@@ -38,7 +52,6 @@ def text_to_speech(
     model: Callable,
     mb_melgan: Callable,
     language="ko",
-    display_streamlit: bool = True,
 ):
     """음성 변환 추론
     언어에 따라 모델이 상이하기 때문에 모델 추론 함수를 부를 때 파라미터가 달라짐으로 구분하며 음성 변환 실행
@@ -78,9 +91,6 @@ def text_to_speech(
 
     # melgan inference (mel-to-wav)
     audio = mb_melgan.inference(mel_outputs)[0, :, 0]
-    if display_streamlit:
-        print(type(audio))
-        return audio
-    else:
-        sf.write("temp.wav", audio, 22050, "PCM_16", format="wav")
-        playsound("temp.wav")
+
+    return audio
+

@@ -1,8 +1,13 @@
+import random
+import tempfile
 import time
-from typing import Callable, List, Optional
+from pathlib import Path
+from typing import Callable, Optional
 
 import modi
 import pandas as pd
+import soundfile as sf
+from playsound import playsound
 
 from voice_synthesis import load_voice_model, text_to_speech
 
@@ -48,18 +53,19 @@ class PaceMakerCar:
             user_data
             if user_data
             else pd.DataFrame(
-                columns=["id", "timd", "user_calories", "running_distance"]
+                columns=["id", "time", "user_calories", "running_distance"]
             )
         )
         self.set_sensor_location()
         self.set_motor_location()
         self.processor, self.model, self.mb_melgan = load_voice_model()
+        self.cheer_up_message = ["조금만 더 힘을 내세요", "잘 하고 있어요. 조금만 속도를 내볼까요?", "얼마 안 남았어요"]
+        self.play_cnt = 0
 
     # 모디 키트와 연결
     @staticmethod
-    async def load_modi() -> None or Callable:
+    async def connect_modi() -> None or Callable:
         try:
-            print("aa")
             bundle = modi.MODI()
             return bundle
         except:
@@ -131,7 +137,7 @@ class PaceMakerCar:
 
     # 텍스트를 음성으로 변환
     def text_to_speech_in_pacemaker(self, text):
-        text_to_speech(
+        audio = text_to_speech(
             text,
             self.processor,
             self.model,
@@ -139,6 +145,10 @@ class PaceMakerCar:
             language="ko",
             display_streamlit=False,
         )
+        sf.write(f"temp_{self.play_cnt}.wav", audio, 22050, "PCM_16", format="wav")
+        playsound(f"temp_{self.play_cnt}.wav")
+        self.play_cnt +=1
+
 
     # 주행
     def run(self):
@@ -175,9 +185,9 @@ class PaceMakerCar:
 
         # 환경 요소 측정 및 주행 사이클
         diff_count = 0
+        self.text_to_speech_in_pacemaker("페이스메이커 주행을 시작합니다.")
         while True:
             start_time = time.time()
-            text_to_speech("운동을 시작합니다.")
             time.sleep(3)
             # 일정 거리 이내
             if distance_diff >= 15:
@@ -193,7 +203,7 @@ class PaceMakerCar:
             # 일정 거리 이탈
             elif distance_diff < 15:
                 if diff_count > 5:
-                    text_to_speech("조금만 더 힘을 내세요!")
+                    self.text_to_speech_in_pacemaker(random.choice(self.cheer_up_message))
                     time.sleep(3)
                 self.motor_left.speed = (
                     -int(self.default_speed * (1 + diff * MULTIPLIER_LR))
@@ -229,12 +239,11 @@ class PaceMakerCar:
             running_distance = motor_speed * (run_time / 60)
 
             self.user_data.append({
-                "id": self.user_id, 
+                "id": self.user_id,
                 "date": end_time,
-                "consumed_calories": cal,
-                "running_distance": running_distance,
-            }, ignore_index=True)
-            
+                "consumed_calories": calories,
+                "running distance": running_distance,},
+                 ignore_index=True)
 
     # 주행 종료
     def stop(self):
@@ -247,7 +256,7 @@ class PaceMakerCar:
 
 if __name__ == "__main__":
     bundle = modi.MODI()
-    car = PaceMakerCar(40, bundle)
+    car = PaceMakerCar(1, 40, bundle)
     try:
         car.run()
     except KeyboardInterrupt:

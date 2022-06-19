@@ -135,12 +135,19 @@ def login_page(user_db: Type[UserDB]):
 
             # 유저 기록
             elif task == "My Record":
+                st.info("다음 분석 정보는 데모용 데이터입니다.")
                 display_new_line(1)
 
                 user_record = pd.DataFrame(
                     user_db.get_user_record(user_id),
                     columns=["id", "date", "consumed_calories", "running_distance"],
                 )
+                user_record = pd.read_csv(
+                    "../demo_data/user_record.csv",
+                    usecols=["id", "date", "consumed_calories", "running_distance"],
+                    index_col=0,
+                )
+
                 user_record = user_record.rename(columns={"date": "index"}).set_index(
                     "index"
                 )

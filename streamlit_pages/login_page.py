@@ -143,7 +143,7 @@ def login_page(user_db: Type[UserDB]):
                     columns=["id", "date", "consumed_calories", "running_distance"],
                 )
                 user_record = pd.read_csv(
-                    "../demo_data/user_record.csv",
+                    "demo_data/user_record.csv",
                     usecols=["id", "date", "consumed_calories", "running_distance"],
                     index_col=0,
                 )

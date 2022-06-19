@@ -135,7 +135,7 @@ def login_page(user_db: Type[UserDB]):
 
             # 유저 기록
             elif task == "My Record":
-                st.info("다음 분석 정보는 데모용 데이터입니다.")
+               # st.info("다음 보이는 데이터는 데모입니다.")
                 display_new_line(1)
 
                 user_record = pd.DataFrame(

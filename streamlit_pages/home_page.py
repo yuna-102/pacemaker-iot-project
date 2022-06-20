@@ -81,4 +81,5 @@ def home_page() -> None:
         unsafe_allow_html=True,
     )
 
-    st.image("images/home_video_player_image.png")
+    #st.image("images/home_video_player_image.png")
+    st.video("https://www.youtube.com/watch?v=DiF-vof2EOo")
